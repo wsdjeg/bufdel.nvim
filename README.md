@@ -1,3 +1,3 @@
 # bufdel.nvim
 
-a simple neovim to delete buffers
+a simple neovim plugin to delete buffers
