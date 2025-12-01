@@ -14,8 +14,9 @@ local function lastused_buf(buffers)
 end
 
 ---@class BufDelOpts
----@field wipe boolean
----@field ignore_user_events boolean set to true to disable User autocmd
+---@field wipe? boolean
+---@field force? boolean discard changes
+---@field ignore_user_events? boolean set to true to disable User autocmd
 
 ---@param buffers table<integer>
 ---@param opt BufDelOpts
@@ -25,7 +26,7 @@ local function delete_buf(buffers, opt)
         alt_buf = vim.api.nvim_create_buf(true, false)
     end
     for _, buf in ipairs(buffers) do
-        if vim.o[buf].modified then
+        if vim.bo[buf].modified and not opt.force then
             vim.api.nvim_echo({
                 { 'save changes to "' .. vim.fn.bufname(buf) .. '"?  Yes/No/Cancel', 'WarningMsg' },
             }, false, {})
@@ -50,8 +51,14 @@ local function delete_buf(buffers, opt)
             if not opt.ignore_user_events then
                 vim.api.nvim_exec_autocmds('User', { pattern = 'BufDelPro', data = { buf = buf } })
             end
+			--@fixme this logic maybe changed
             local wipe = opt and opt.wipe
-            vim.api.nvim_buf_delete(buf, { unload = not wipe })
+            -- https://github.com/neovim/neovim/issues/33314
+            -- https://github.com/neovim/neovim/issues/33314#issuecomment-2780814695
+            vim.api.nvim_buf_delete(buf, { unload = not wipe, force = opt.force })
+            if not wipe then
+                vim.api.nvim_set_option_value('buflisted', false, { buf = buf })
+            end
             if not opt.ignore_user_events then
                 vim.api.nvim_exec_autocmds('User', { pattern = 'BufDelPost', data = { buf = buf } })
             end
@@ -76,6 +83,16 @@ function M.delete(buf, opt)
     elseif type(buf) == 'table' then
         delete_buf(buf, opt)
     end
+end
+
+function M.complete(lead, cmdline, pos)
+    local bufs = vim.tbl_filter(function(t)
+        return vim.bo[t].buflisted and vim.api.nvim_buf_get_name(t):find(lead)
+    end, vim.api.nvim_list_bufs())
+
+    return vim.tbl_map(function(t)
+        return vim.fn.bufname(t)
+    end, bufs)
 end
 
 return M

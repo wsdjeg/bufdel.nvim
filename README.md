@@ -12,6 +12,7 @@ bufdel.nvim is a neovim plugin that helps you delete buffers without changing wi
 
 - [Installation](#installation)
 - [Usage](#usage)
+- [User Commands](#user-commands)
 - [User Autocmds](#user-autocmds)
 - [Credits](#credits)
 - [Self-Promotion](#self-promotion)
@@ -52,6 +53,10 @@ require("bufdel").delete(function(buf)
 	end
 end, { wipe = true })
 ```
+## User Commands
+
+bufdel.nvim also provides two user commands `:Bdelete` and `:Bwipeout`, which is just same as `:delete` and `:bwipeout`,
+but these user commands will not change the windows layout.
 
 ## User Autocmds
 
