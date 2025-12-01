@@ -1,3 +1,4 @@
+---@class BufDel
 local M = {}
 
 local function lastused_buf(buffers)
@@ -12,7 +13,12 @@ local function lastused_buf(buffers)
 	return info[1] and info[1].bufnr
 end
 
+---@class BufDelOpts
+---@field wipe boolean
+---@field event boolean set to false to disable User autocmd
+
 ---@param buffers table<integer>
+---@param opt? BufDelOpts
 local function delete_buf(buffers, opt)
 	local alt_buf = lastused_buf(buffers)
 	if not alt_buf then
@@ -42,16 +48,17 @@ local function delete_buf(buffers, opt)
 				vim.api.nvim_win_set_buf(w, alt_buf)
 			end
 			vim.api.nvim_exec_autocmds("User", { pattern = "BufDelPro", data = { buf = buf } })
-			vim.api.nvim_buf_delete(buf, { unload = not opt.wipe })
+			local wipe = opt and opt.wipe
+			vim.api.nvim_buf_delete(buf, { unload = not wipe })
 			vim.api.nvim_exec_autocmds("User", { pattern = "BufDelPost", data = { buf = buf } })
 		end
 	end
 end
 
+---@param buf integer|fun(bufnr: integer): boolean
+---@param opt? BufDelOpts
 function M.delete(buf, opt)
-	if type(buf) == "number" then
-		delete_buf(buf, opt)
-	elseif type(buf) == "function" then
+	if vim.is_callable(buf) then
 		local del_bufs = {}
 		for _, v in ipairs(vim.api.nvim_list_bufs()) do
 			if buf(v) then
@@ -59,7 +66,12 @@ function M.delete(buf, opt)
 			end
 		end
 		delete_buf(del_bufs, opt)
+	elseif type(buf) == "number" then
+		delete_buf({ buf }, opt)
+	elseif type(buf) == "table" then
+		delete_buf(buf, opt)
 	end
 end
 
 return M
+-- vim:ts=4:sts=4:sw=0:noet:ai:si:sta:
