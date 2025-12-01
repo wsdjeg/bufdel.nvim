@@ -63,7 +63,12 @@ local function delete_buf(buffers, opt)
             local wipe = opt and opt.wipe
             -- https://github.com/neovim/neovim/issues/33314
             -- https://github.com/neovim/neovim/issues/33314#issuecomment-2780814695
-            vim.api.nvim_buf_delete(buf, { unload = not wipe, force = opt.force })
+            local ok, err =
+                pcall(vim.api.nvim_buf_delete, buf, { unload = not wipe, force = opt.force })
+            if not ok then
+                -- if failed to run nvim_buf_delete, BufDelPost event will not be triggered.
+                return
+            end
             if not wipe then
                 vim.api.nvim_set_option_value('buflisted', false, { buf = buf })
             end

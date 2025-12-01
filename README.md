@@ -78,6 +78,8 @@ vim.api.nvim_create_autocmd({ "User" }, {
 })
 ```
 
+The `User BufDelPost` event will not be triggered if failed to delete buffer.
+
 
 ## Credits
 
