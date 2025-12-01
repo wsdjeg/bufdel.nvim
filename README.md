@@ -48,9 +48,7 @@ require("bufdel").delete({ 2, 3, 5 }, { wipe = true })
 
 ```lua
 require("bufdel").delete(function(buf)
-	if not vim.o[buf].modified and vim.o[buf].buflisted then
-		return true
-	end
+    return not vim.bo[buf]modified and vim.bo[buf].buflisted
 end, { wipe = true })
 ```
 ## User Commands
