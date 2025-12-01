@@ -57,6 +57,28 @@ local function delete_buf(buffers, opt)
                     { 'canceled!', 'ModeMsg' },
                 }, false, {})
             end
+        elseif vim.bo[buf].buftype == 'terminal' and not opt.force then
+            -- handle terminal buffer
+            if vim.fn.jobwait({ vim.bo[buf].channel }, 0)[1] == -1 then
+                vim.api.nvim_echo({
+                    -- yes: save and delete
+                    -- no: do not save, force delete
+                    -- cancel: do not save, do not delete
+                    {
+                        'Terminal buffer ' .. buf .. ' is still running, killed?  Yes/No',
+                        'WarningMsg',
+                    },
+                }, false, {})
+                local c = vim.fn.getchar()
+                if c == 121 then
+                    vim.cmd.redraw()
+                    delete_buf({ buf }, { wipe = true, force = true })
+                else
+                    vim.api.nvim_echo({
+                        { 'Keep running', 'ModeMsg' },
+                    }, false, {})
+                end
+            end
         else
             for _, w in ipairs(vim.fn.win_findbuf(buf)) do
                 if vim.api.nvim_get_option_value('winfixbuf', { win = w }) == true then
