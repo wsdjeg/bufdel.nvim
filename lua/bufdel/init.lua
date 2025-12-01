@@ -31,6 +31,11 @@ local function delete_buf(buffers, opt)
                 { 'save changes to "' .. vim.fn.bufname(buf) .. '"?  Yes/No/Cancel', 'WarningMsg' },
             }, false, {})
             local c = vim.fn.getchar()
+            --save changes to "lua\bufdel\init.lua"?  Yes/No/Cancel
+            -- canceled!
+            -- Press ENTER or type command to continue
+			-- @fixme can not clear the cmdline?
+			vim.cmd.redraw()
             if c == 121 then
                 vim.api.nvim_buf_call(buf, function()
                     vim.cmd('write')
