@@ -28,22 +28,30 @@ local function delete_buf(buffers, opt)
     for _, buf in ipairs(buffers) do
         if vim.bo[buf].modified and not opt.force then
             vim.api.nvim_echo({
+                -- yes: save and delete
+                -- no: do not save, force delete
+                -- cancel: do not save, do not delete
                 { 'save changes to "' .. vim.fn.bufname(buf) .. '"?  Yes/No/Cancel', 'WarningMsg' },
             }, false, {})
             local c = vim.fn.getchar()
             --save changes to "lua\bufdel\init.lua"?  Yes/No/Cancel
             -- canceled!
             -- Press ENTER or type command to continue
-			-- @fixme can not clear the cmdline?
-			vim.cmd.redraw()
+            -- @fixme can not clear the cmdline?
+            vim.cmd.redraw()
             if c == 121 then
                 vim.api.nvim_buf_call(buf, function()
                     vim.cmd('write')
                 end)
+                delete_buf({ buf }, opt)
             elseif c == 110 then
                 vim.api.nvim_echo({
                     { 'discarded!', 'ModeMsg' },
                 }, false, {})
+                delete_buf(
+                    { buf },
+                    { wipe = opt.wipe, force = true, ignore_user_events = opt.ignore_user_events }
+                )
             else
                 vim.api.nvim_echo({
                     { 'canceled!', 'ModeMsg' },
