@@ -38,7 +38,7 @@ local function delete_buf(buffers, opt)
             -- canceled!
             -- Press ENTER or type command to continue
             -- @fixme can not clear the cmdline?
-            vim.cmd.redraw()
+            vim.cmd.mode()
             if c == 121 then
                 vim.api.nvim_buf_call(buf, function()
                     vim.cmd('write')
@@ -70,6 +70,7 @@ local function delete_buf(buffers, opt)
                     },
                 }, false, {})
                 local c = vim.fn.getchar()
+                vim.cmd.mode()
                 if c == 121 then
                     vim.cmd.redraw()
                     delete_buf({ buf }, { wipe = true, force = true })
