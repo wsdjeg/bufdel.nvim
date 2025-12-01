@@ -46,12 +46,20 @@ local function delete_buf(buffers, opt)
             end
         else
             for _, w in ipairs(vim.fn.win_findbuf(buf)) do
-                vim.api.nvim_win_set_buf(w, alt_buf)
+                if vim.api.nvim_get_option_value('winfixbuf', { win = w }) == true then
+                else
+                    vim.api.nvim_win_set_buf(w, alt_buf)
+                end
+            end
+            -- for bufhide=wipe
+            if not vim.api.nvim_buf_is_valid(buf) then
+                -- buf does not exists, skiped
+                return
             end
             if not opt.ignore_user_events then
                 vim.api.nvim_exec_autocmds('User', { pattern = 'BufDelPro', data = { buf = buf } })
             end
-			--@fixme this logic maybe changed
+            --@fixme this logic maybe changed
             local wipe = opt and opt.wipe
             -- https://github.com/neovim/neovim/issues/33314
             -- https://github.com/neovim/neovim/issues/33314#issuecomment-2780814695
