@@ -1,0 +1,114 @@
+*bufdel.nvim* Delete buffer without changing windows layout in Neovim.
+
+Author: Eric Wong <wsdjeg@outlook.com>
+Url: https://github.com/wsdjeg/bufdel.nvim
+
+==============================================================================
+CONTENTS                                                              *bufdel*
+
+  1. Introduction                                        |bufdel-introduction|
+  2. Installation                                        |bufdel-installation|
+  3. Usage                                                      |bufdel-usage|
+  4. User Commands                                           |bufdel-commands|
+  5. User Autocmds                                           |bufdel-autocmds|
+  6. Credits                                                  |bufdel-credits|
+  7. Self-Promotion                                    |bufdel-self-promotion|
+  8. License                                                  |bufdel-license|
+
+==============================================================================
+ 1. INTRODUCTION                                       *bufdel-introduction*
+
+ bufdel.nvim is a neovim plugin that helps you delete buffers without
+ changing windows layout.
+
+==============================================================================
+ 2. Installation                                       *bufdel-installation*
+
+Using nvim-plug <https://github.com/wsdjeg/nvim-plug>
+
+>
+    require("plug").add({
+	    {
+		    "wsdjeg/bufdel.nvim",
+	    },
+    })
+<
+
+==============================================================================
+ 3. Usage                                                     *bufdel-usage*
+
+ 1. delete a specific buffer:
+
+>
+  require("bufdel").delete(2, { wipe = true })
+<
+
+ 2. delete more than one buffers:
+
+>
+  require("bufdel").delete({ 2, 3, 5 }, { wipe = true })
+<
+
+ 3. delete buffers with filter function:
+
+>
+  require("bufdel").delete(function(buf)
+    return not vim.bo[buf]modified and vim.bo[buf].buflisted
+  end, { wipe = true })
+<
+
+==============================================================================
+ 4. User Commands                                          *bufdel-commands*
+
+bufdel.nvim also provides two user commands `:Bdelete` and `:Bwipeout`,
+which is just same as `:delete` and `:bwipeout`, but these user commands will
+not change the windows layout.
+
+==============================================================================
+ 5. User Autocmds                                          *bufdel-autocmds*
+
+bufdel.nvim triggers two user autocmds when delete a buffer, `User BufDelPro`
+and `User BufDelPost`. here is an example to handled these events:
+
+>
+    local mygroup = vim.api.nvim_create_augroup("bufdel_custom",
+        { clear = true })
+    vim.api.nvim_create_autocmd({ "User" }, {
+        group = mygroup,
+        pattern = "BufDelPro",
+        callback = function(ev)
+            --- the deleted buffer number is saved in ev.data.buf
+        end,
+    })
+    vim.api.nvim_create_autocmd({ "User" }, {
+        group = mygroup,
+        pattern = "BufDelPost",
+        callback = function(ev)
+            --- the deleted buffer number is saved in ev.data.buf
+        end,
+    })
+<
+
+The `User BufDelPost` event will not be triggered if failed to delete buffer.
+
+==============================================================================
+ 6. Credits                                                 *bufdel-credits*
+
+- bufdelete.nvim: https://github.com/famiu/bufdelete.nvim
+- Snacks.nvim: https://github.com/folke/snacks.nvim
+- nvim-bufdel: https://github.com/ojroques/nvim-bufdel
+
+==============================================================================
+ 7. Self-Promotion                                   *bufdel-self-promotion*
+
+Like this plugin? Star the repository on GitHub.
+
+Love this plugin? Follow me <https://wsdjeg.net/> on GitHub
+<https://github.com/wsdjeg>.
+
+==============================================================================
+ 8. License                                                   *bufdel-license*
+
+This project is licensed under the GPL-3.0 License.
+
+ vim:cc=78:tw=78:ts=4:sw=4:et:ft=help:norl:
