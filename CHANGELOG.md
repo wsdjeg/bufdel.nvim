@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/wsdjeg/bufdel.nvim/compare/v1.1.0...v1.1.1) (2025-12-03)
+
+
+### Bug Fixes
+
+* update release-please action ([a72bc6a](https://github.com/wsdjeg/bufdel.nvim/commit/a72bc6abb97f1492f80df64a3682e75aa1626a4b))
+
 ## [1.1.0](https://github.com/wsdjeg/bufdel.nvim/compare/v1.0.1...v1.1.0) (2025-12-01)
 
 
