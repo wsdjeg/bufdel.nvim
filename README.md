@@ -30,6 +30,12 @@ require('plug').add({
 })
 ```
 
+Using luarocks
+
+```
+luarocks install bufdel.nvim
+```
+
 ## Usage
 
 1. delete a specific buffer:
@@ -51,6 +57,7 @@ require("bufdel").delete(function(buf)
     return not vim.bo[buf]modified and vim.bo[buf].buflisted
 end, { wipe = true })
 ```
+
 ## User Commands
 
 bufdel.nvim also provides two user commands `:Bdelete` and `:Bwipeout`, which is just same as `:delete` and `:bwipeout`,
@@ -79,7 +86,6 @@ vim.api.nvim_create_autocmd({ "User" }, {
 ```
 
 The `User BufDelPost` event will not be triggered if failed to delete buffer.
-
 
 ## Credits
 
