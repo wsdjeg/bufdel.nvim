@@ -65,7 +65,8 @@ but these user commands will not change the windows layout.
 
 ## User Autocmds
 
-bufdel.nvim triggers two user autocmds when delete a buffer, `User BufDelPro` and `User BufDelPost`. here is an example to handled these events:
+bufdel.nvim triggers two user autocmds when delete a buffer, `User BufDelPro` and `User BufDelPost`.
+here is an example to handled these events:
 
 ```lua
 local mygroup = vim.api.nvim_create_augroup("bufdel_custom", { clear = true })
@@ -85,7 +86,7 @@ vim.api.nvim_create_autocmd({ "User" }, {
 })
 ```
 
-The `User BufDelPost` event will not be triggered if failed to delete buffer.
+The `User BufDelPost` event will not be triggered if failed to delete the buffer.
 
 ## Credits
 
@@ -99,7 +100,7 @@ Like this plugin? Star the repository on
 GitHub.
 
 Love this plugin? Follow [me](https://wsdjeg.net/) on
-[GitHub](https://github.com/wsdjeg).
+[GitHub](https://github.com/wsdjeg) or [Twitter](https://x.com/EricWongDEV).
 
 ## License
 
