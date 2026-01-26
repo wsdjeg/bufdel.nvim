@@ -3,28 +3,62 @@ local M = {}
 
 local logger = require('bufdel.logger')
 
-local function lastused_buf(buffers)
-    local info = vim.fn.getbufinfo({ buflisted = 1 })
-    info = vim.tbl_filter(function(i)
-        return not vim.tbl_contains(buffers, i.bufnr)
-    end, info)
-    table.sort(info, function(a, b)
-        return a.lastused > b.lastused
-    end)
+local switch_functions = {
+    lastused = function(buffers)
+        local info = vim.fn.getbufinfo({ buflisted = 1 })
+        info = vim.tbl_filter(function(i)
+            return not vim.tbl_contains(buffers, i.bufnr)
+        end, info)
+        table.sort(info, function(a, b)
+            return a.lastused > b.lastused
+        end)
 
-    return info[1] and info[1].bufnr
-end
+        return info[1] and info[1].bufnr
+    end,
+    alt = function(buffers)
+        return vim.fn.bufnr('#')
+    end,
+    current = function(buffers)
+        return vim.api.nvim_get_current_buf()
+    end,
+    next = function(buffers)
+        table.sort(buffers)
+        local buf = buffers[#buffers]
+        local bufs = vim.tbl_filter(function(t)
+            return t > buf and vim.api.nvim_get_option_value('buflisted', { buf = t })
+        end, vim.api.nvim_list_bufs())
+        if #bufs >= 1 then
+            return bufs[1]
+        end
+    end,
+    prev = function(buffers)
+        table.sort(buffers)
+        local buf = buffers[1]
+        local bufs = vim.tbl_filter(function(t)
+            return t < buf and vim.api.nvim_get_option_value('buflisted', { buf = t })
+        end, vim.api.nvim_list_bufs())
+        if #bufs >= 1 then
+            return bufs[#bufs]
+        end
+    end,
+}
 
 ---@class BufDelOpts
 ---@field wipe? boolean
 ---@field force? boolean discard changes
 ---@field ignore_user_events? boolean set to true to disable User autocmd
+---@field switch? function
 
 ---@param buffers table<integer>
 ---@param opt BufDelOpts
 local function delete_buf(buffers, opt)
-    local alt_buf = lastused_buf(buffers)
-    if not alt_buf then
+    local alt_buf
+    if opt.switch and type(opt.switch) == 'function' then
+        alt_buf = opt.switch(buffers)
+    elseif opt.switch and type(opt.switch) == 'string' and switch_functions[opt.switch] then
+        alt_buf = switch_functions[opt.switch](buffers)
+    end
+    if not alt_buf or not vim.api.nvim_buf_is_valid(alt_buf) then
         alt_buf = vim.api.nvim_create_buf(true, false)
     end
     for _, buf in ipairs(buffers) do
@@ -104,7 +138,7 @@ local function delete_buf(buffers, opt)
             local ok, err =
                 pcall(vim.api.nvim_buf_delete, buf, { unload = not wipe, force = opt.force })
             if not ok then
-				logger.info(string.format('failed to delete buf %d, skip BufDelPost event.', buf))
+                logger.info(string.format('failed to delete buf %d, skip BufDelPost event.', buf))
                 return
             end
             if not wipe then

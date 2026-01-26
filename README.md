@@ -38,35 +38,116 @@ luarocks install bufdel.nvim
 
 ## Usage
 
-1. delete a specific buffer:
+1. Delete a specific buffer
 
-```lua
-require('bufdel').delete(2, { wipe = true })
-```
+   Delete a single buffer by providing its buffer number.  
+   This is useful when you already know exactly which buffer should be removed.
 
-2. delete more than one buffers:
+   ```lua
+   require("bufdel").delete(2, { wipe = true })
+   ```
 
-```lua
-require('bufdel').delete({ 2, 3, 5 }, { wipe = true })
-```
+   - The first argument is the buffer number to delete
+   - The buffer must be valid
+   - If `wipe = true`, the buffer is wiped (`:bwipeout`)
+   - Otherwise, the buffer is deleted (`:bdelete`)
 
-3. delete buffers with filter function:
+2. Delete multiple buffers
 
-```lua
-require('bufdel').delete(function(buf)
-    return not vim.bo[buf].modified and vim.bo[buf].buflisted
-end, { wipe = true })
+   Delete multiple buffers at once by passing a list of buffer numbers.
 
--- delete buffers based on regex
-require('bufdel').delete(function(buf)
-    local regex = '.txt$'
-    if vim.regex(regex):match_str(vim.api.nvim_buf_get_name(buf)) then
-        return true
-    end
-end, { wipe = true })
-```
+   ```lua
+   require("bufdel").delete({ 2, 3, 5 }, { wipe = true })
+   ```
 
+   - Each item in the list must be a valid buffer number
+   - Invalid or already-deleted buffers are ignored
+   - Buffers are deleted in sequence
+   - This is useful for batch-cleaning buffers
 
+3. Delete buffers using a filter function
+
+   Delete buffers dynamically by providing a filter function.  
+   The function is called for each existing buffer and should return true
+   if the buffer should be deleted.
+
+   ```lua
+   require("bufdel").delete(function(buf)
+   return not vim.bo[buf].modified and vim.bo[buf].buflisted
+   end, { wipe = true })
+   ```
+
+   - The filter function receives a buffer number
+   - Return `true` to mark the buffer for deletion
+   - Return `false` or `nil` to keep the buffer
+   - This allows conditional deletion based on buffer state
+
+   Delete buffers whose names match a regular expression:
+
+   ```lua
+   require("bufdel").delete(function(buf)
+   local regex = ".txt$"
+   return vim.regex(regex):match_str(vim.api.nvim_buf_get_name(buf))
+   end, { wipe = true })
+   ```
+
+   - The buffer name is matched against a Vim regular expression
+   - Only buffers whose names satisfy the pattern will be deleted
+   - This is useful for cleaning up temporary or generated files
+
+4. Specify the buffer to switch to after deletion
+
+   By default, bufdel.nvim lets Neovim decide which buffer to display after a buffer is deleted.  
+   You can override this behavior using the switch option to explicitly control which buffer to switch to after deletion.
+
+   Use a function to customize the switch logic (recommended)
+
+   ```lua
+   require("bufdel").delete(
+     function(buf)
+       return not vim.bo[buf].modified and vim.bo[buf].buflisted
+     end,
+     {
+       wipe = true,
+       switch = function(deleted_buf)
+         -- Return a valid buffer number
+         return vim.fn.bufnr("#") -- switch to the alternate buffer
+       end,
+     }
+   )
+   ```
+
+   When switch is a function:
+
+   - It receives the deleted buffer number (bufnr)
+   - It must return a target bufnr
+   - If the returned buffer is invalid, the switch is ignored
+
+   Use built-in switch strategies
+
+   ```lua
+   require("bufdel").delete(filter, {
+     wipe = true,
+     switch = "alt", -- alternate buffer (#)
+   })
+   ```
+
+   Supported built-in values:
+
+   - "alt" – alternate buffer (#)
+   - "current" – keep the current buffer
+   - "lastused" - the last used buffer
+   - "next" – next buffer
+   - "prev" – previous buffer
+
+   Specify a buffer number directly
+
+   ```lua
+   require("bufdel").delete(filter, {
+     wipe = true,
+     switch = 3, -- switch to bufnr = 3
+   })
+   ```
 
 ## User Commands
 
