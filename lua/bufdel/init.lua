@@ -1,6 +1,8 @@
 ---@class BufDel
 local M = {}
 
+local logger = require('bufdel.logger')
+
 local function lastused_buf(buffers)
     local info = vim.fn.getbufinfo({ buflisted = 1 })
     info = vim.tbl_filter(function(i)
@@ -102,7 +104,7 @@ local function delete_buf(buffers, opt)
             local ok, err =
                 pcall(vim.api.nvim_buf_delete, buf, { unload = not wipe, force = opt.force })
             if not ok then
-                -- if failed to run nvim_buf_delete, BufDelPost event will not be triggered.
+				logger.info(string.format('failed to delete buf %d, skip BufDelPost event.', buf))
                 return
             end
             if not wipe then
