@@ -41,22 +41,32 @@ luarocks install bufdel.nvim
 1. delete a specific buffer:
 
 ```lua
-require("bufdel").delete(2, { wipe = true })
+require('bufdel').delete(2, { wipe = true })
 ```
 
 2. delete more than one buffers:
 
 ```lua
-require("bufdel").delete({ 2, 3, 5 }, { wipe = true })
+require('bufdel').delete({ 2, 3, 5 }, { wipe = true })
 ```
 
 3. delete buffers with filter function:
 
 ```lua
-require("bufdel").delete(function(buf)
-    return not vim.bo[buf]modified and vim.bo[buf].buflisted
+require('bufdel').delete(function(buf)
+    return not vim.bo[buf].modified and vim.bo[buf].buflisted
+end, { wipe = true })
+
+-- delete buffers based on regex
+require('bufdel').delete(function(buf)
+    local regex = '.txt$'
+    if vim.regex(regex):match_str(vim.api.nvim_buf_get_name(buf)) then
+        return true
+    end
 end, { wipe = true })
 ```
+
+
 
 ## User Commands
 
