@@ -104,7 +104,7 @@ The `User BufDelPost` event will not be triggered if failed to delete buffer.
 Like this plugin? Star the repository on GitHub.
 
 Love this plugin? Follow me <https://wsdjeg.net/> on GitHub
-<https://github.com/wsdjeg>.
+<https://github.com/wsdjeg> or Twitter <https://x.com/EricWongDEV>
 
 ==============================================================================
  8. License                                                   *bufdel-license*
