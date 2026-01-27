@@ -1,6 +1,6 @@
 vim.api.nvim_create_user_command('Bdelete', function(opt)
     local bufdel = require('bufdel')
-    bufdel.delete(bufdel.cmd_to_buffers(opt), { force = opt.bang })
+    bufdel.delete(bufdel.cmd_to_buffers(opt), { force = opt.bang, switch = 'lastused' })
 end, {
     nargs = '*',
     bang = true,
@@ -10,7 +10,7 @@ end, {
 })
 vim.api.nvim_create_user_command('Bwipeout', function(opt)
     local bufdel = require('bufdel')
-    bufdel.delete(bufdel.cmd_to_buffers(opt), { wipe = true, force = opt.bang })
+    bufdel.delete(bufdel.cmd_to_buffers(opt), { wipe = true, force = opt.bang, switch = 'lastused' })
 end, {
     nargs = '*',
     bang = true,

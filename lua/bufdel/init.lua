@@ -47,7 +47,7 @@ local switch_functions = {
 ---@field wipe? boolean
 ---@field force? boolean discard changes
 ---@field ignore_user_events? boolean set to true to disable User autocmd
----@field switch? function
+---@field switch? function|string
 
 ---@param buffers table<integer>
 ---@param opt BufDelOpts
