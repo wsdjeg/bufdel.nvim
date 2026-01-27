@@ -57,8 +57,8 @@ local function delete_buf(buffers, opt)
         alt_buf = opt.switch(buffers)
     elseif opt.switch and type(opt.switch) == 'string' and switch_functions[opt.switch] then
         alt_buf = switch_functions[opt.switch](buffers)
-	elseif opt.switch and type(opt.switch) == "number" then
-		alt_buf = opt.switch
+    elseif opt.switch and type(opt.switch) == 'number' then
+        alt_buf = opt.switch
     end
     if not alt_buf or not vim.api.nvim_buf_is_valid(alt_buf) then
         alt_buf = vim.api.nvim_create_buf(true, false)
@@ -180,6 +180,29 @@ function M.complete(lead, cmdline, pos)
     return vim.tbl_map(function(t)
         return vim.fn.bufname(t)
     end, bufs)
+end
+
+function M.cmd_to_buffers(opt)
+    if #opt.fargs == 0 then
+        if opt.range == 0 then
+            return vim.api.nvim_get_current_buf()
+        else
+            local range = { tonumber(opt.line1), tonumber(opt.line2) }
+            table.sort(range)
+            return vim.tbl_filter(function(t)
+                return t > range[1] and t <= range[2]
+            end, vim.api.nvim_list_bufs())
+        end
+    end
+    local buffers = {}
+    for _, b in ipairs(opt.fargs) do
+        if vim.fn.bufnr(b) > 0 then
+            table.insert(buffers, vim.fn.bufnr(b))
+        elseif tonumber(b) then
+            table.insert(buffers, tonumber(b))
+        end
+    end
+    return buffers
 end
 
 return M
