@@ -154,6 +154,25 @@ luarocks install bufdel.nvim
 bufdel.nvim also provides two user commands `:Bdelete` and `:Bwipeout`, which is just same as `:delete` and `:bwipeout`,
 but these user commands will not change the windows layout.
 
+Examples:
+
+1. Delete the current buffer
+   ```
+   :Bdelete
+   ```
+2. Delete a specific buffer by buffer number
+   ```
+   :Bdelete 3
+   ```
+3. Delete multiple buffers
+   ```
+   :Bdelete 2 5 7
+   ```
+4. Delete a range of buffers
+   ```
+   :3,6Bdelete
+   ```
+
 ## User Autocmds
 
 bufdel.nvim triggers two user autocmds when delete a buffer, `User BufDelPro` and `User BufDelPost`.
