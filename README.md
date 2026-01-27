@@ -173,6 +173,16 @@ Examples:
    :3,6Bdelete
    ```
 
+**Note:**
+Because of limitations in Vim’s Ex command parsing,
+buffer names that consist of digits only cannot be used with `:Bdelete <bufname>`.
+It is same behavior as `:bdelete` and `:bwipeout`.
+In this case, please use the buffer number instead:
+
+```
+:Bdelete <bufnr>
+```
+
 ## User Autocmds
 
 bufdel.nvim triggers two user autocmds when delete a buffer, `User BufDelPro` and `User BufDelPost`.
