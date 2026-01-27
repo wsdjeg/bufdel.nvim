@@ -52,6 +52,9 @@ local switch_functions = {
 ---@param buffers table<integer>
 ---@param opt BufDelOpts
 local function delete_buf(buffers, opt)
+    if #buffers == 0 then
+        return
+    end
     local alt_buf
     if opt.switch and type(opt.switch) == 'function' then
         alt_buf = opt.switch(buffers)
@@ -170,17 +173,8 @@ function M.delete(buf, opt)
     elseif type(buf) == 'string' then
         if vim.fn.bufnr(buf) > 0 then
             delete_buf({ vim.fn.bufnr(buf) }, opt)
-		else
-			local buffers = {}
-            local ok, re = pcall(vim.regex, buf)
-            if ok then
-                for _, nr in ipairs(vim.api.nvim_list_bufs()) do
-                    if re:match_str(vim.fn.bufname(nr)) then
-                        table.insert(buffers, nr)
-                    end
-                end
-            end
-			delete_buf(buffers, opt)
+        else
+            delete_buf(M.regex_to_bufs(buf), opt)
         end
     elseif type(buf) == 'table' then
         delete_buf(buf, opt)
@@ -195,6 +189,19 @@ function M.complete(lead, cmdline, pos)
     return vim.tbl_map(function(t)
         return vim.fn.bufname(t)
     end, bufs)
+end
+
+function M.regex_to_bufs(regex)
+    local buffers = {}
+    local ok, re = pcall(vim.regex, regex)
+    if ok then
+        for _, nr in ipairs(vim.api.nvim_list_bufs()) do
+            if re:match_str(vim.fn.bufname(nr)) then
+                table.insert(buffers, nr)
+            end
+        end
+    end
+    return buffers
 end
 
 function M.cmd_to_buffers(opt)
@@ -218,13 +225,8 @@ function M.cmd_to_buffers(opt)
         elseif vim.fn.bufnr(b) > 0 then
             table.insert(buffers, vim.fn.bufnr(b))
         else
-            local ok, re = pcall(vim.regex, b)
-            if ok then
-                for _, nr in ipairs(vim.api.nvim_list_bufs()) do
-                    if re:match_str(vim.fn.bufname(nr)) then
-                        table.insert(buffers, nr)
-                    end
-                end
+            for _, v in ipairs(M.regex_to_bufs(b)) do
+                table.insert(buffers, v)
             end
         end
     end
