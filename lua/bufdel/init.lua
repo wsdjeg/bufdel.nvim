@@ -167,6 +167,21 @@ function M.delete(buf, opt)
         delete_buf(del_bufs, opt)
     elseif type(buf) == 'number' then
         delete_buf({ buf }, opt)
+    elseif type(buf) == 'string' then
+        if vim.fn.bufnr(buf) > 0 then
+            delete_buf({ vim.fn.bufnr(buf) }, opt)
+		else
+			local buffers = {}
+            local ok, re = pcall(vim.regex, buf)
+            if ok then
+                for _, nr in ipairs(vim.api.nvim_list_bufs()) do
+                    if re:match_str(vim.fn.bufname(nr)) then
+                        table.insert(buffers, nr)
+                    end
+                end
+            end
+			delete_buf(buffers, opt)
+        end
     elseif type(buf) == 'table' then
         delete_buf(buf, opt)
     end
