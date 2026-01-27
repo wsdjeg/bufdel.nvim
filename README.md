@@ -52,7 +52,7 @@ The `opt` parameter is a table used to control the deletion behavior. Supported 
 
 - `wipe`: whether to wipe the buffer (`bwipeout`) instead of deleting it (`bdelete`)
 - `force`: force deletion even if the buffer is modified
-- `ignore_user_events`: skip triggering `User BufDelPro` and `User BufDelPost` events
+- `ignore_user_events`: skip triggering `User BufDelPre` and `User BufDelPost` events
 - `switch`: specify which buffer to switch to after deletion
 
 Examples:
@@ -204,14 +204,14 @@ In this case, please use the buffer number instead:
 
 ## User Autocmds
 
-bufdel.nvim triggers two user autocmds when delete a buffer, `User BufDelPro` and `User BufDelPost`.
+bufdel.nvim triggers two user autocmds when delete a buffer, `User BufDelPre` and `User BufDelPost`.
 here is an example to handled these events:
 
 ```lua
 local mygroup = vim.api.nvim_create_augroup("bufdel_custom", { clear = true })
 vim.api.nvim_create_autocmd({ "User" }, {
 	group = mygroup,
-	pattern = "BufDelPro",
+	pattern = "BufDelPre",
 	callback = function(ev)
         --- the deleted buffer number is saved in ev.data.buf
     end,

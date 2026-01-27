@@ -136,7 +136,7 @@ local function delete_buf(buffers, opt)
                 return
             end
             if not opt.ignore_user_events then
-                vim.api.nvim_exec_autocmds('User', { pattern = 'BufDelPro', data = { buf = buf } })
+                vim.api.nvim_exec_autocmds('User', { pattern = 'BufDelPre', data = { buf = buf } })
             end
             --@fixme this logic maybe changed
             local wipe = opt and opt.wipe

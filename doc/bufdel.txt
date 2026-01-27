@@ -67,7 +67,7 @@ not change the windows layout.
 ==============================================================================
  5. User Autocmds                                          *bufdel-autocmds*
 
-bufdel.nvim triggers two user autocmds when delete a buffer, `User BufDelPro`
+bufdel.nvim triggers two user autocmds when delete a buffer, `User BufDelPre`
 and `User BufDelPost`. here is an example to handled these events:
 
 >
@@ -75,7 +75,7 @@ and `User BufDelPost`. here is an example to handled these events:
         { clear = true })
     vim.api.nvim_create_autocmd({ "User" }, {
         group = mygroup,
-        pattern = "BufDelPro",
+        pattern = "BufDelPre",
         callback = function(ev)
             --- the deleted buffer number is saved in ev.data.buf
         end,
