@@ -38,6 +38,25 @@ luarocks install bufdel.nvim
 
 ## Usage
 
+This plugin exposes a core `delete` function, which accepts two parameters: `buffers` and `opt`.
+
+The buffers parameter specifies which buffers should be deleted. It supports multiple forms:
+
+- A single integer (buffer number), `0` for current buffer.
+- A string (buffer name)
+- A vim regex, which will be matched against buffer names
+- A table of integers, strings, or regex patterns
+- A function, used to filter `vim.api.nvim_list_bufs()`. The function receives a buffer number as its argument and must return a boolean indicating whether the buffer should be deleted.
+
+The `opt` parameter is a table used to control the deletion behavior. Supported keys include:
+
+- `wipe`: whether to wipe the buffer (`bwipeout`) instead of deleting it (`bdelete`)
+- `force`: force deletion even if the buffer is modified
+- `ignore_user_events`: skip triggering `User BufDelPro` and `User BufDelPost` events
+- `switch`: specify which buffer to switch to after deletion
+
+Examples:
+
 1. Delete a specific buffer
 
    Delete a single buffer by providing its buffer number.  

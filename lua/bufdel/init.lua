@@ -157,7 +157,7 @@ end
 ---@param opt? BufDelOpts
 function M.delete(buf, opt)
     opt = opt or {}
-    if vim.is_callable(buf) then
+    if type(buf) == 'function' then
         local del_bufs = {}
         for _, v in ipairs(vim.api.nvim_list_bufs()) do
             if buf(v) then
@@ -183,23 +183,34 @@ function M.complete(lead, cmdline, pos)
 end
 
 function M.cmd_to_buffers(opt)
-    if #opt.fargs == 0 then
-        if opt.range == 0 then
-            return vim.api.nvim_get_current_buf()
-        else
-            local range = { tonumber(opt.line1), tonumber(opt.line2) }
-            table.sort(range)
-            return vim.tbl_filter(function(t)
-                return t > range[1] and t <= range[2]
-            end, vim.api.nvim_list_bufs())
+    local buffers = {}
+    if opt.range == 0 and #opt.fargs == 0 then
+        table.insert(buffers, vim.api.nvim_get_current_buf())
+    end
+    if opt.range > 0 then
+        local range = { tonumber(opt.line1), tonumber(opt.line2) }
+        table.sort(range)
+        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+            if buf >= range[1] and buf <= range[2] then
+                table.insert(buffers, buf)
+            end
         end
     end
-    local buffers = {}
     for _, b in ipairs(opt.fargs) do
-        if vim.fn.bufnr(b) > 0 then
+        local buf = tonumber(b)
+        if buf and math.floor(buf) == buf then
+            table.insert(buffers, buf)
+        elseif vim.fn.bufnr(b) > 0 then
             table.insert(buffers, vim.fn.bufnr(b))
-        elseif tonumber(b) then
-            table.insert(buffers, tonumber(b))
+        else
+            local ok, re = pcall(vim.regex, b)
+            if ok then
+                for _, nr in ipairs(vim.api.nvim_list_bufs()) do
+                    if re:match_str(vim.fn.bufname(nr)) then
+                        table.insert(buffers, nr)
+                    end
+                end
+            end
         end
     end
     return buffers
