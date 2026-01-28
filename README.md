@@ -15,6 +15,7 @@ bufdel.nvim is a neovim plugin that helps you delete buffers without changing wi
 - [User Commands](#user-commands)
 - [User Autocmds](#user-autocmds)
 - [Credits](#credits)
+- [Comparison with Existing Plugins](#comparison-with-existing-plugins)
 - [Self-Promotion](#self-promotion)
 - [License](#license)
 
@@ -230,8 +231,28 @@ The `User BufDelPost` event will not be triggered if failed to delete the buffer
 ## Credits
 
 - [bufdelete.nvim](https://github.com/famiu/bufdelete.nvim)
-- [Snacks.bufdelete](https://github.com/folke/snacks.nvim/blob/main/docs/bufdelete.md)
-- [nvim-bufdel](https://github.com/ojroques/nvim-bufdel)
+
+The core logic of bufdel.nvim is derived from **bufdelete.nvim**.
+
+## Comparison with Existing Plugins
+
+Below is a minimal comparison of bufdel.nvim and several other buffer-deletion plugins
+based on the features the author personally uses:
+
+| Feature / Plugin          | bufdel.nvim | [bufdelete.nvim](https://github.com/famiu/bufdelete.nvim) | [nvim-bufdel](https://github.com/ojroques/nvim-bufdel) | [snacks.bufdelete](https://github.com/folke/snacks.nvim/blob/main/lua/snacks/bufdelete.lua) | [mini.bufremove](https://github.com/nvim-mini/mini.nvim/blob/main/lua/mini/bufremove.lua) |
+| ------------------------- | ----------- | --------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Preserve window layout    | ✓           | ✓                                                         | ✓                                                      | ✓                                                                                           | ✓                                                                                         |
+| Delete by bufnr           | ✓           | ✓                                                         | ✓                                                      | ✓                                                                                           | ✓                                                                                         |
+| Delete by bufname         | ✓           | ✓                                                         | ✓                                                      | ✓                                                                                           | ✗                                                                                         |
+| User Command              | ✓           | ✓                                                         | ✓                                                      | ✗                                                                                           | ✗                                                                                         |
+| Lua filter function       | ✓           | ✗                                                         | ✗                                                      | ✓                                                                                           | ✗                                                                                         |
+| Regex buffer matching     | ✓           | lua pattern                                               | ✗                                                      | ✗                                                                                           | ✗                                                                                         |
+| Post-delete buffer switch | ✓           | ✓                                                         | ✓                                                      | ✗                                                                                           | ✗                                                                                         |
+| User autocmd hooks        | ✓           | ?                                                         | ✗                                                      | ✗                                                                                           | ✗                                                                                         |
+
+Some plugins are actively maintained. For a more detailed comparison, you’re encouraged to
+try them and see which best fits your setup.  
+If you notice any inaccuracies or mistakes in the comparison, please feel free to open an issue.
 
 ## Self-Promotion
 
