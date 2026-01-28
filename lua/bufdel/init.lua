@@ -62,8 +62,8 @@ local function delete_buf(buffers, opt)
         alt_buf = switch_functions[opt.switch](buffers)
     elseif opt.switch and type(opt.switch) == 'number' then
         alt_buf = opt.switch
-	else
-		alt_buf = switch_functions.lastused(buffers)
+    else
+        alt_buf = switch_functions.lastused(buffers)
     end
     if not alt_buf or not vim.api.nvim_buf_is_valid(alt_buf) then
         alt_buf = vim.api.nvim_create_buf(true, false)

@@ -64,7 +64,7 @@ Examples:
    This is useful when you already know exactly which buffer should be removed.
 
    ```lua
-   require("bufdel").delete(2, { wipe = true })
+   require('bufdel').delete(2, { wipe = true })
    ```
 
    - The first argument is the buffer number to delete
@@ -77,7 +77,7 @@ Examples:
    Delete multiple buffers at once by passing a list of buffer numbers.
 
    ```lua
-   require("bufdel").delete({ 2, 3, 5 }, { wipe = true })
+   require('bufdel').delete({ 2, 3, 5 }, { wipe = true })
    ```
 
    - Each item in the list must be a valid buffer number
@@ -92,8 +92,11 @@ Examples:
    if the buffer should be deleted.
 
    ```lua
-   require("bufdel").delete(function(buf)
-   return not vim.bo[buf].modified and vim.bo[buf].buflisted
+   -- delete other saved buffers
+   require('bufdel').delete(function(buf)
+       return not vim.bo[buf].modified
+           and vim.bo[buf].buflisted
+           and buf ~= vim.api.nvim_get_current_buf()
    end, { wipe = true })
    ```
 
@@ -102,20 +105,17 @@ Examples:
    - Return `false` or `nil` to keep the buffer
    - This allows conditional deletion based on buffer state
 
-   Delete buffers whose names match a regular expression:
+4. Delete buffers whose names match a regular expression:
 
    ```lua
-   require("bufdel").delete(function(buf)
-   local regex = ".txt$"
-   return vim.regex(regex):match_str(vim.api.nvim_buf_get_name(buf))
-   end, { wipe = true })
+   require('bufdel').delete('.txt$', { wipe = true })
    ```
 
    - The buffer name is matched against a Vim regular expression
    - Only buffers whose names satisfy the pattern will be deleted
    - This is useful for cleaning up temporary or generated files
 
-4. Specify the buffer to switch to after deletion
+5. Specify the buffer to switch to after deletion
 
    By default, bufdel.nvim lets Neovim decide which buffer to display after a buffer is deleted.  
    You can override this behavior using the switch option to explicitly control which buffer to switch to after deletion.
@@ -123,18 +123,15 @@ Examples:
    Use a function to customize the switch logic (recommended)
 
    ```lua
-   require("bufdel").delete(
-     function(buf)
+   require('bufdel').delete(function(buf)
        return not vim.bo[buf].modified and vim.bo[buf].buflisted
-     end,
-     {
+   end, {
        wipe = true,
        switch = function(deleted_buf)
-         -- Return a valid buffer number
-         return vim.fn.bufnr("#") -- switch to the alternate buffer
+           -- Return a valid buffer number
+           return vim.fn.bufnr('#') -- switch to the alternate buffer
        end,
-     }
-   )
+   })
    ```
 
    When switch is a function:
@@ -146,9 +143,9 @@ Examples:
    Use built-in switch strategies
 
    ```lua
-   require("bufdel").delete(filter, {
-     wipe = true,
-     switch = "alt", -- alternate buffer (#)
+   require('bufdel').delete(filter, {
+       wipe = true,
+       switch = 'alt', -- alternate buffer (#)
    })
    ```
 
@@ -163,9 +160,9 @@ Examples:
    Specify a buffer number directly
 
    ```lua
-   require("bufdel").delete(filter, {
-     wipe = true,
-     switch = 3, -- switch to bufnr = 3
+   require('bufdel').delete(filter, {
+       wipe = true,
+       switch = 3, -- switch to bufnr = 3
    })
    ```
 
