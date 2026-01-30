@@ -44,9 +44,10 @@ This plugin exposes a core `delete` function, which accepts two parameters: `buf
 The buffers parameter specifies which buffers should be deleted. It supports multiple forms:
 
 - A single integer (buffer number), `0` for current buffer.
-- A string (buffer name)
-- A vim regex, which will be matched against buffer names
-- A table of integers, strings, or regex patterns
+- A string: it is first resolved to a buffer number using `bufnr(str)`.  
+  If a valid buffer number is returned, that buffer is deleted.  
+  Otherwise, the string is treated as a Vim regular expression and matched against buffer names.
+- A table of integers or strings (each string follows the same resolution rule as above)
 - A function, used to filter `vim.api.nvim_list_bufs()`. The function receives a buffer number as its argument and must return a boolean indicating whether the buffer should be deleted.
 
 The `opt` parameter is a table used to control the deletion behavior. Supported keys include:
