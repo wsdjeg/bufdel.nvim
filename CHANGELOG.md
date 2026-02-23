@@ -1,5 +1,30 @@
 # Changelog
 
+## [2.0.0](https://github.com/wsdjeg/bufdel.nvim/compare/v1.1.0...v2.0.0) (2026-02-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* rename `BufDelPro` to `BufDelPre`
+
+### Features
+
+* add bufdel logger ([985faac](https://github.com/wsdjeg/bufdel.nvim/commit/985faacae422a50641cacec3a6d0f9a204d70fc8))
+* add switch option ([d267809](https://github.com/wsdjeg/bufdel.nvim/commit/d26780969b1aff62b48e9ea8d9acd106718980a4))
+* lazy load function ([468bd48](https://github.com/wsdjeg/bufdel.nvim/commit/468bd48a958d0dff868cf8c9764c41097e31e6d6))
+* support string argument ([937263c](https://github.com/wsdjeg/bufdel.nvim/commit/937263cdd65986125c97f510fba982bb4e028750))
+
+
+### Bug Fixes
+
+* fix cmd_to_buffers function ([e4939c8](https://github.com/wsdjeg/bufdel.nvim/commit/e4939c820b2776af8083b82db2350aab614bc476))
+* rename `BufDelPro` to `BufDelPre` ([c45a2b1](https://github.com/wsdjeg/bufdel.nvim/commit/c45a2b10857ca9106dd4d071716d5e2f4bf5c2d7))
+* skip empty buffer list ([15b2149](https://github.com/wsdjeg/bufdel.nvim/commit/15b2149850c068166d3b9e019f9fb72703a74208))
+* update release-please action ([a72bc6a](https://github.com/wsdjeg/bufdel.nvim/commit/a72bc6abb97f1492f80df64a3682e75aa1626a4b))
+* use lastused as default switch ([7b9346b](https://github.com/wsdjeg/bufdel.nvim/commit/7b9346bc676430b03620ef6aca60e7c39d938100))
+* use lastused as default switch ([8249db5](https://github.com/wsdjeg/bufdel.nvim/commit/8249db590d9c8b33e265ac825221dce3378d4aab))
+* use opt.switch as number ([dd96964](https://github.com/wsdjeg/bufdel.nvim/commit/dd96964a9a5b7e54ea1113d8a43110e4e634b60b))
+
 ## [1.1.0](https://github.com/wsdjeg/bufdel.nvim/compare/v1.0.1...v1.1.0) (2025-12-01)
 
 
