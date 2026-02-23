@@ -10,9 +10,17 @@ bufdel.nvim is a neovim plugin that helps you delete buffers without changing wi
 
 <!-- vim-markdown-toc GFM -->
 
+- [Requirements](#requirements)
 - [Installation](#installation)
+    - [Using nvim-plug](#using-nvim-plug)
+    - [Using lazy.nvim](#using-lazynvim)
+    - [Using packer.nvim](#using-packernvim)
+    - [Using luarocks](#using-luarocks)
 - [Usage](#usage)
 - [User Commands](#user-commands)
+- [Interactive Prompts](#interactive-prompts)
+    - [Modified Buffer Prompt](#modified-buffer-prompt)
+    - [Terminal Buffer Prompt](#terminal-buffer-prompt)
 - [User Autocmds](#user-autocmds)
 - [Credits](#credits)
 - [Comparison with Existing Plugins](#comparison-with-existing-plugins)
@@ -21,9 +29,13 @@ bufdel.nvim is a neovim plugin that helps you delete buffers without changing wi
 
 <!-- vim-markdown-toc -->
 
+## Requirements
+
+- Neovim >= 0.10.0
+
 ## Installation
 
-Using [nvim-plug](https://github.com/wsdjeg/nvim-plug)
+### Using [nvim-plug](https://github.com/wsdjeg/nvim-plug)
 
 ```lua
 require('plug').add({
@@ -31,7 +43,27 @@ require('plug').add({
 })
 ```
 
-Using luarocks
+### Using [lazy.nvim](https://github.com/folke/lazy.nvim)
+
+```lua
+{
+  'wsdjeg/bufdel.nvim',
+  cmd = { 'Bdelete', 'Bwipeout' },
+  keys = {
+    { '<leader>bd', '<cmd>Bdelete<cr>', desc = 'Delete buffer' },
+    { '<leader>bD', '<cmd>Bdelete!<cr>', desc = 'Force delete buffer' },
+    { '<leader>bw', '<cmd>Bwipeout<cr>', desc = 'Wipeout buffer' },
+  },
+}
+```
+
+### Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
+
+```lua
+use('wsdjeg/bufdel.nvim')
+```
+
+### Using luarocks
 
 ```
 luarocks install bufdel.nvim
@@ -56,6 +88,15 @@ The `opt` parameter is a table used to control the deletion behavior. Supported 
 - `force`: force deletion even if the buffer is modified
 - `ignore_user_events`: skip triggering `User BufDelPre` and `User BufDelPost` events
 - `switch`: specify which buffer to switch to after deletion
+
+**Default Behavior:**
+
+The Lua API and user commands have different defaults for `switch`:
+
+| Context                  | Default `switch` | Behavior                            |
+| ------------------------ | ---------------- | ----------------------------------- |
+| Lua API `delete()`       | `nil`            | Let Neovim decide                   |
+| `:Bdelete` / `:Bwipeout` | `'lastused'`     | Switch to most recently used buffer |
 
 Examples:
 
@@ -169,8 +210,15 @@ Examples:
 
 ## User Commands
 
-bufdel.nvim also provides two user commands `:Bdelete` and `:Bwipeout`, which is just same as `:delete` and `:bwipeout`,
-but these user commands will not change the windows layout.
+bufdel.nvim provides two user commands `:Bdelete` and `:Bwipeout`, which work the same as `:bdelete` and `:bwipeout`,
+but these commands preserve the window layout.
+
+| Command               | Description                     |
+| --------------------- | ------------------------------- |
+| `:Bdelete [buf...]`   | Delete buffer(s)                |
+| `:Bdelete! [buf...]`  | Force delete (discard changes)  |
+| `:Bwipeout [buf...]`  | Wipe buffer(s) completely       |
+| `:Bwipeout! [buf...]` | Force wipeout (discard changes) |
 
 Examples:
 
@@ -190,21 +238,59 @@ Examples:
    ```
    :3,6Bdelete
    ```
+5. Force delete without saving
+   ```
+   :Bdelete!
+   ```
 
-**Note:**
-Because of limitations in Vim’s Ex command parsing,
-buffer names that consist of digits only cannot be used with `:Bdelete <bufname>`.
-It is same behavior as `:bdelete` and `:bwipeout`.
-In this case, please use the buffer number instead:
+**Features:**
+
+- `<Tab>` completion for buffer names
+- `!` bang modifier to force deletion
+- Range support (`:3,6Bdelete`)
+- Multiple buffer arguments
+
+> **Note:**
+> Because of limitations in Vim's Ex command parsing,
+> buffer names that consist of digits only cannot be used with `:Bdelete <bufname>`.
+> It is the same behavior as `:bdelete` and `:bwipeout`.
+> In this case, please use the buffer number instead:
+>
+> ```
+> :Bdelete <bufnr>
+> ```
+
+## Interactive Prompts
+
+When deleting a buffer without `force=true` (or without `!` in commands), bufdel.nvim shows interactive prompts in certain situations:
+
+### Modified Buffer Prompt
+
+When attempting to delete a buffer with unsaved changes:
 
 ```
-:Bdelete <bufnr>
+save changes to "filename"?  Yes/No/Cancel
 ```
+
+- Press `y` (Yes): Save changes and delete the buffer
+- Press `n` (No): Discard changes and force delete
+- Press any other key: Cancel the deletion
+
+### Terminal Buffer Prompt
+
+When attempting to delete a terminal buffer with a running job:
+
+```
+Terminal buffer N is still running, killed?  Yes/No
+```
+
+- Press `y` (Yes): Kill the terminal job and delete the buffer
+- Press any other key: Keep the terminal running (deletion cancelled)
 
 ## User Autocmds
 
-bufdel.nvim triggers two user autocmds when delete a buffer, `User BufDelPre` and `User BufDelPost`.
-here is an example to handled these events:
+bufdel.nvim triggers two user autocmds when deleting a buffer: `User BufDelPre` and `User BufDelPost`.
+Here is an example to handle these events:
 
 ```lua
 local mygroup = vim.api.nvim_create_augroup("bufdel_custom", { clear = true })
@@ -248,14 +334,14 @@ based on the features the author personally uses:
 | Post-delete buffer switch | ✓           | ✓                                                         | ✓                                                      | ✗                                                                                           | ✗                                                                                         |
 | User autocmd hooks        | ✓           | ✓                                                         | ✗                                                      | ✗                                                                                           | ✗                                                                                         |
 
-Some plugins are actively maintained. For a more detailed comparison, you’re encouraged to
+Some plugins are actively maintained. For a more detailed comparison, you're encouraged to
 try them and see which best fits your setup.  
 If you notice any inaccuracies or mistakes in the comparison, please feel free to open an issue.
 
 ## Self-Promotion
 
 Like this plugin? Star the repository on
-GitHub.
+[GitHub](https://github.com/wsdjeg/bufdel.nvim).
 
 Love this plugin? Follow [me](https://wsdjeg.net/) on
 [GitHub](https://github.com/wsdjeg) or [Twitter](https://x.com/EricWongDEV).
