@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/wsdjeg/bufdel.nvim/compare/v2.0.0...v2.0.1) (2026-07-16)
+
+
+### Bug Fixes
+
+* **test:** correct assertions for non-wipe buffer deletion ([ac9a53e](https://github.com/wsdjeg/bufdel.nvim/commit/ac9a53e1f20deb82fdd942b71a4daa9e7b0a6720))
+
 ## [2.0.0](https://github.com/wsdjeg/bufdel.nvim/compare/v1.1.0...v2.0.0) (2026-02-23)
 
 
