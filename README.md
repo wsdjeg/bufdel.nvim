@@ -2,6 +2,7 @@
 
 bufdel.nvim is a neovim plugin that helps you delete buffers without changing windows layout.
 
+[![Run Tests](https://github.com/wsdjeg/bufdel.nvim/actions/workflows/test.yml/badge.svg)](https://github.com/wsdjeg/bufdel.nvim/actions/workflows/test.yml)
 [![GitHub License](https://img.shields.io/github/license/wsdjeg/bufdel.nvim)](LICENSE)
 [![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/wsdjeg/bufdel.nvim)](https://github.com/wsdjeg/bufdel.nvim/issues)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/wsdjeg/bufdel.nvim)](https://github.com/wsdjeg/bufdel.nvim/commits/master/)
